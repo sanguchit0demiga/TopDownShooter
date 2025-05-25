@@ -2,17 +2,20 @@ using UnityEngine;
 
 public class SpaceMovement : MonoBehaviour
 {
-    public Vector2 velocidadDesplazamiento = new Vector2(0.1f, 0.1f);
-    private Material material;
+
+
+    public float scrollSpeed = 0.1f;
+    private Renderer rend;
 
     void Start()
     {
-        material = GetComponent<Renderer>().material;
+        rend = GetComponent<Renderer>();
     }
 
     void Update()
     {
-        Vector2 offset = Time.time * velocidadDesplazamiento;
-        material.mainTextureOffset = offset;
+        float offset = Time.time * scrollSpeed;
+       
+        rend.material.mainTextureOffset = new Vector2(0, offset);
     }
 }

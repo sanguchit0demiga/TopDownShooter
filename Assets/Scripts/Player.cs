@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Player : MonoBehaviour
 {
@@ -8,20 +9,37 @@ public class Player : MonoBehaviour
     public GameObject bullet;
     public float bulletSpeed;
     public float cadenciaDisparo;
-    public float tiempoUltimoDisparo;
+    
 
     public Transform[] spawner;
-
+    private bool shooting;
+    private Coroutine shootCoroutine;
     private void Update()
     {
      
         Vector3 movimiento = new Vector3(moveInput.x, 0, moveInput.y) * speed * Time.deltaTime;
         transform.Translate(movimiento, Space.World);
 
-        if (Input.GetMouseButton(0) && Time.time > tiempoUltimoDisparo + cadenciaDisparo)
+        if (Input.GetMouseButtonDown(0))
+        {
+            shooting = true;
+            shootCoroutine = StartCoroutine(RafagaDisparo());
+        }
+        else if (Input.GetMouseButtonUp(0))
+        {
+            shooting = false;
+            if (shootCoroutine != null)
+                StopCoroutine(shootCoroutine);
+        }
+    }
+
+
+    IEnumerator RafagaDisparo()
+    {
+        while (shooting)
         {
             Shoot();
-            tiempoUltimoDisparo = Time.time;
+            yield return new WaitForSeconds(cadenciaDisparo);
         }
     }
 
@@ -29,20 +47,16 @@ public class Player : MonoBehaviour
     {
         foreach (Transform punto in spawner)
         {
-            
             GameObject bala = Instantiate(bullet, punto.position, punto.rotation);
-
-         
             Rigidbody rb = bala.GetComponent<Rigidbody>();
-
-           
-            rb.velocity = punto.forward * bulletSpeed;
-
-            
+            if (rb != null)
+            {
+                rb.linearVelocity = punto.forward * bulletSpeed;
+            }
             Destroy(bala, 3f);
         }
-
     }
+
     private void Awake()
     {
         controls = new PlayerControls();
@@ -51,7 +65,6 @@ public class Player : MonoBehaviour
     private void OnEnable()
     {
         controls.PlayerMovement.Enable();
-
         controls.PlayerMovement.Move.performed += ctx => moveInput = ctx.ReadValue<Vector2>();
         controls.PlayerMovement.Move.canceled += ctx => moveInput = Vector2.zero;
     }
@@ -60,6 +73,4 @@ public class Player : MonoBehaviour
     {
         controls.PlayerMovement.Disable();
     }
-
-   
 }
