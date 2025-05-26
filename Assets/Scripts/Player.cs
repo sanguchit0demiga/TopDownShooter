@@ -9,7 +9,7 @@ public class Player : MonoBehaviour
     public GameObject bullet;
     public float bulletSpeed;
     public float cadenciaDisparo;
-    
+    public int health;
 
     public Transform[] spawner;
     private bool shooting;
@@ -72,5 +72,19 @@ public class Player : MonoBehaviour
     private void OnDisable()
     {
         controls.PlayerMovement.Disable();
+    }
+    public void TakeDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            Die();
+        }
+    }
+
+    void Die()
+    {
+        Destroy(gameObject);
     }
 }
