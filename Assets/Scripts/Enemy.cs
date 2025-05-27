@@ -19,7 +19,7 @@ public class Enemy : MonoBehaviour
     }
 
    
-    public void Move()
+    public virtual void Move()
     {
         transform.Translate(Vector3.back * speed * Time.deltaTime);
     }

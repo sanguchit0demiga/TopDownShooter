@@ -87,4 +87,12 @@ public class Player : MonoBehaviour
     {
         Destroy(gameObject);
     }
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("BulletEnemy"))
+        {
+            TakeDamage(1);
+            Destroy(other.gameObject);
+        }
+    }
 }

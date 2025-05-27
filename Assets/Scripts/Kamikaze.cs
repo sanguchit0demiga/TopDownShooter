@@ -4,7 +4,7 @@ public class KamikazeEnemy : Enemy
 {
     private Transform playerTransform;
 
-    private void Start()
+    protected new void Start()
     {
         base.Start();
         GameObject playerObj = GameObject.FindGameObjectWithTag("Player");
