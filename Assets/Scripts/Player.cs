@@ -10,11 +10,21 @@ public class Player : MonoBehaviour
     public float bulletSpeed;
     public float cadenciaDisparo;
     public int health;
-
+    public HealthBar healthbar;
     public Transform[] spawner;
     private bool shooting;
     private Coroutine shootCoroutine;
-    private void Update()
+
+    void Start()
+    {
+        if (healthbar != null)
+        {
+            healthbar.maxHealth = health;
+            healthbar.currentHealth = health;
+            healthbar.UpdateBar();
+        }
+    }
+        private void Update()
     {
      
         Vector3 movimiento = new Vector3(moveInput.x, 0, moveInput.y) * speed * Time.deltaTime;
@@ -77,6 +87,13 @@ public class Player : MonoBehaviour
     {
         health -= damage;
 
+        if (healthbar != null)
+        {
+            healthbar.currentHealth = health;
+            healthbar.UpdateBar();
+        }
+
+      
         if (health <= 0)
         {
             Die();
