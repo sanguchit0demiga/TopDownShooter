@@ -42,6 +42,7 @@ public class Player : MonoBehaviour
             if (shootCoroutine != null)
                 StopCoroutine(shootCoroutine);
         }
+        RotarHaciaCursor();
     }
 
 
@@ -104,6 +105,14 @@ public class Player : MonoBehaviour
 
     void Die()
     {
+        if (GameManager.Instance != null)
+        {
+            GameManager.Instance.GameOver();
+        }
+        else
+        {
+            Debug.LogWarning("GameManager.Instance es null");
+        }
         Destroy(gameObject);
     }
     void OnTriggerEnter(Collider other)
@@ -113,12 +122,17 @@ public class Player : MonoBehaviour
             TakeDamage(1);
             Destroy(other.gameObject);
         }
-        if (other.CompareTag("Heart"))
+        else if (other.CompareTag("BossBullet"))
         {
-            IncreaseHealth(1);
+            TakeDamage(2);
             Destroy(other.gameObject);
         }
-        if (other.CompareTag("Bolt"))
+        else if (other.CompareTag("Heart"))
+        {
+            IncreaseHealth(3);
+            Destroy(other.gameObject);
+        }
+        else if (other.CompareTag("Bolt"))
         {
             ActivateExtraSpawner();
             Destroy(other.gameObject);
@@ -148,5 +162,23 @@ public class Player : MonoBehaviour
     {
         yield return new WaitForSeconds(segundos);
         ActiveSpawners = 2;
+    }
+    void RotarHaciaCursor()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        Plane plano = new Plane(Vector3.up, transform.position);
+
+        if (plano.Raycast(ray, out float distancia))
+        {
+            Vector3 puntoImpacto = ray.GetPoint(distancia);
+            Vector3 direccion = (puntoImpacto - transform.position).normalized;
+            direccion.y = 0;
+
+            if (direccion != Vector3.zero)
+            {
+                Quaternion rotacion = Quaternion.LookRotation(direccion);
+                transform.rotation = rotacion;
+            }
+        }
     }
 }

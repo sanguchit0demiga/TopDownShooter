@@ -1,5 +1,6 @@
-using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
+using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
@@ -11,12 +12,12 @@ public class GameManager : MonoBehaviour
     public int enemigosRestantes;
     public GameObject jefePrefab;
     public Transform puntoSpawnJefe;
+    public EnemySpawner enemySpawner;
 
     private bool jefeAparecio = false;
 
     void Awake()
     {
-      
         if (Instance == null)
         {
             Instance = this;
@@ -27,18 +28,33 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EnemigoMuerto()
+    public void EnemigoMuerto(Enemy enemigo)
     {
+        if (enemigo.esJefe)
+        {
+            Win();
+            return;
+        }
+
         enemigosMuertos++;
         enemigosRestantes = Mathf.Max(0, cantidadParaJefe - enemigosMuertos);
 
-        enemiesRemainingText.text = "Enemies Remaining: " + enemigosRestantes;
+        if (enemiesRemainingText != null)
+        {
+            enemiesRemainingText.text = "Enemies Remaining: " + enemigosRestantes;
+        }
 
         Debug.Log("Enemigos muertos: " + enemigosMuertos);
 
         if (enemigosMuertos >= cantidadParaJefe && !jefeAparecio)
         {
             jefeAparecio = true;
+
+            if (enemySpawner != null)
+            {
+                enemySpawner.DetenerSpawner();
+            }
+
             SpawnJefe();
         }
     }
@@ -47,9 +63,22 @@ public class GameManager : MonoBehaviour
     {
         if (jefePrefab != null && puntoSpawnJefe != null)
         {
-            Instantiate(jefePrefab, puntoSpawnJefe.position, Quaternion.identity);
-         
+            GameObject jefe = Instantiate(jefePrefab, puntoSpawnJefe.position, Quaternion.identity);
+            Enemy enemigoJefe = jefe.GetComponent<Enemy>();
+            if (enemigoJefe != null)
+            {
+                enemigoJefe.esJefe = true;
+            }
         }
-        
+    }
+
+    public void GameOver()
+    {
+        SceneManager.LoadScene("Menu 1");
+    }
+
+    public void Win()
+    {
+        SceneManager.LoadScene("Menu 2");
     }
 }

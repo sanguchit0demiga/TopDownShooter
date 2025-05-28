@@ -1,4 +1,5 @@
 using UnityEngine;
+using System.Collections;
 
 public class Enemy : MonoBehaviour
 {
@@ -7,13 +8,23 @@ public class Enemy : MonoBehaviour
     public float speed = 2f;
     public PowerUps dropConfig;
     public bool isDead = false;
+    private Renderer rend;
+    private Color originalColor;
+    public bool esJefe = false;
+
 
     public void Start()
     {
         currentHealth = maxHealth;
+        rend = GetComponentInChildren<Renderer>();
+        if (rend != null)
+        {
+            originalColor = rend.material.color;
+        }
     }
 
-    void Update()
+
+    protected virtual void Update()
     {
         Move();
     }
@@ -30,6 +41,11 @@ public class Enemy : MonoBehaviour
 
         currentHealth -= damage;
 
+        if (rend != null)
+        {
+            StartCoroutine(FlashRed());
+        }
+
         if (currentHealth <= 0)
         {
             isDead = true;  
@@ -37,13 +53,19 @@ public class Enemy : MonoBehaviour
         }
     }
 
+    IEnumerator FlashRed()
+    {
+        rend.material.color = Color.red;
+        yield return new WaitForSeconds(0.1f); 
+        rend.material.color = originalColor;
+    }
     public void Die()
     {
         TryDropItem();
 
         if (GameManager.Instance != null)
         {
-            GameManager.Instance.EnemigoMuerto();
+            GameManager.Instance.EnemigoMuerto(this);  
         }
         else
         {
