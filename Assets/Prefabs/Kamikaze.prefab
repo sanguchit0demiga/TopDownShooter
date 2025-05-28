@@ -6120,7 +6120,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxHealth: 8
   currentHealth: 8
-  speed: 4
+  speed: 3
+  dropConfig: {fileID: 11400000, guid: 1c002be6567c9304ba24dd4357b1fe43, type: 2}
 --- !u!1 &8362230191375742720
 GameObject:
   m_ObjectHideFlags: 0

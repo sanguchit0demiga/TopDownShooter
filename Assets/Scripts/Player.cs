@@ -14,7 +14,8 @@ public class Player : MonoBehaviour
     public Transform[] spawner;
     private bool shooting;
     private Coroutine shootCoroutine;
-
+    private int ActiveSpawners = 2;
+    private Coroutine powerUpShootCoroutine;
     void Start()
     {
         if (healthbar != null)
@@ -55,8 +56,9 @@ public class Player : MonoBehaviour
 
     void Shoot()
     {
-        foreach (Transform punto in spawner)
+        for (int i = 0; i < ActiveSpawners && i < spawner.Length; i++)
         {
+            Transform punto = spawner[i];
             GameObject bala = Instantiate(bullet, punto.position, punto.rotation);
             Rigidbody rb = bala.GetComponent<Rigidbody>();
             if (rb != null)
@@ -111,5 +113,40 @@ public class Player : MonoBehaviour
             TakeDamage(1);
             Destroy(other.gameObject);
         }
+        if (other.CompareTag("Heart"))
+        {
+            IncreaseHealth(1);
+            Destroy(other.gameObject);
+        }
+        if (other.CompareTag("Bolt"))
+        {
+            ActivateExtraSpawner();
+            Destroy(other.gameObject);
+        }
+    }
+    void IncreaseHealth(int cantidad)
+    {
+        health += cantidad;
+
+        if (health > healthbar.maxHealth)
+            health = (int)healthbar.maxHealth;
+
+        healthbar.currentHealth = health;
+        healthbar.UpdateBar();
+    }
+   void ActivateExtraSpawner()
+    {
+        if (powerUpShootCoroutine != null)
+        {
+            StopCoroutine(powerUpShootCoroutine);
+        }
+
+        ActiveSpawners = Mathf.Min(spawner.Length, ActiveSpawners + 2);
+        powerUpShootCoroutine = StartCoroutine(DesactivarSpawnersExtraDespuesDeTiempo(7f));
+    }
+    IEnumerator DesactivarSpawnersExtraDespuesDeTiempo(float segundos)
+    {
+        yield return new WaitForSeconds(segundos);
+        ActiveSpawners = 2;
     }
 }

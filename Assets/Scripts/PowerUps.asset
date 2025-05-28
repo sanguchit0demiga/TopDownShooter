@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 94478125a4812d446b0970f10ce05483, type: 3}
+  m_Name: PowerUps
+  m_EditorClassIdentifier: 
+  posiblesDrops:
+  - objeto: {fileID: 2147028707756798318, guid: 2c0185f33d7a953408d13b91ec715b5e, type: 3}
+    probabilidad: 0.2
+  - objeto: {fileID: 7562496588500512188, guid: 0855f1aa32e68a54bb077168b2175bc3, type: 3}
+    probabilidad: 0.2
